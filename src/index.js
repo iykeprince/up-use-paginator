@@ -1,17 +1,30 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
+import { useState } from 'react'
+import PropTypes from 'prop-types';
 
-ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-  document.getElementById('root')
-);
+const usePaginator = ({itemsPerPage}) => {
+    const [currentPage, setCurrentPage] = useState(1)
+    const [perPage, setPerPage] = useState(itemsPerPage)
+    const [itemData, setItemData] = useState([])
+    
+    const handleNextPage = () => {
+      setCurrentPage(currentPage+1)
+    }
+  
+    const handlePreviousPage = () => {
+      if (currentPage > 1) setCurrentPage(currentPage-1)
+    }
+    
+  
+    const indexOfLastPage = currentPage * perPage
+    const indexOfFirstPage = indexOfLastPage - perPage
+    const data = itemData && itemData.slice(indexOfFirstPage, indexOfLastPage)
+    const totalPage = itemData && Math.ceil(itemData.length / perPage)
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
+    return { data, totalPage, currentPage, setItemData, handleNextPage, handlePreviousPage}
+}
+
+usePaginator.propTypes = {
+  itemsPerPage: PropTypes.number
+}
+
+export default usePaginator
